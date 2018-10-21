@@ -1,0 +1,23 @@
+runtime: python27
+api_version: 1
+service: default
+threadsafe: true
+
+handlers:
+
+# root
+- url: /
+  static_files: index.html
+  upload: index.html
+
+- url: /satview
+  static_files: satview/index.html
+  upload: satview/index.html
+
+- url: /settings
+  static_files: settings/index.html
+  upload: settings/index.html
+
+- url: /(.+)
+  static_files: \1
+  upload: (.+)

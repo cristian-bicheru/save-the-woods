@@ -1,0 +1,100 @@
+<!doctype html>
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/3.2.1/firebase.js"></script>
+<script src="https://www.gstatic.com/firebasejs/3.1.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/3.1.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/ui/live/1.0/firebase-ui-auth.js"></script>
+<link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/live/1.0/firebase-ui-auth.css">
+<link rel="stylesheet" type="text/css" href="/style.css">
+<script src="/satview/main.js"></script>
+<style>
+* {box-sizing: border-box;}
+
+.img-zoom-container {
+  position: relative;
+}
+
+.img-zoom-lens {
+  position: absolute;
+  border: 1px solid #d4d4d4;
+  /*set the size of the lens:*/
+  width: 4%;
+  height: 4vw;
+}
+
+.img-zoom-result {
+  border: 1px solid #d4d4d4;
+  /*set the size of the result div:*/
+  width: 20%;
+  height: 20vw;
+}
+</style>
+<title>Save The Woods - Sat. Data</title>
+</head>
+<body>
+
+<div id="logged-out">
+	<div class="header" id="headerMoving" style="position:fixed;opacity:0.8;text-align:left;max-height:100%">
+		<div style="padding-top:5px;padding-bottom:5px;">
+  		<h4 style="letter-spacing:1px;float:left;padding:15px;margin:0;">Save The Woods</h4>
+		<a href="/" class="headl"><div class="lbox" style="float:left;max-height:50px"><h4 style="letter-spacing:1px;padding:15px;margin:0;">Home</h4></div></a>
+  		<h4 style="letter-spacing:1px;float:right;padding:15px;margin:0;">Live Satellite Coverage</h4>
+ 		<div style="clear:both"></div>
+		</div>
+	</div>
+  	
+	<div>
+		<div style="padding-top:80px" style="max-width:50%">
+			<h4 align="center"> Wildfire Satellite Data (VIIRS Sensor) </h4>
+			<div class="img-zoom-container" style="display:flex;align-items:center;justify-content:space-evenly;">
+				<img id="myimage" src="http://35.231.15.56/static/map.png" style="max-width:70%" class="bigboi" />
+				<div id="myresult" class="img-zoom-result"><h4 align="center"> 5x Zoom </h4></div>
+			</div>
+		</div>
+		<div style="clear:both;"></div>
+		<div>
+			<center>
+				<h4 align="center"> Details About The Map </h4>
+				<p style="max-width:50%;text-align:justify;"> The data for this map is received from the VIIRS sensor on the Suomi National Polar-orbiting Partnership (Suomi-NPP) satellite. The resolution for this sensor is 375 meters. The sensor measures infrared signals received and uses an algorithm to determine if it really is a fire or someting else (like cloud or water). The map is updated every fifteen minutes, and the update times are indicated by the timestamp on the bottom left. On the bottom right is a scale which indicates the Fire Radiative Power (FRP) of the point/location, blue signifies a less intense fire, and yellow indicates a very intense fire.<p>
+			</center>
+		</div>
+	</div>
+
+
+</div>
+
+</body>
+<script>
+
+function fadein(){
+    jQuery("#headerMoving").fadeIn();
+};
+function fadeout(){
+    jQuery("#headerMoving").fadeOut();
+};
+window.onscroll = function() {moveHeader()};
+function moveHeader() {
+  if (window.pageYOffset > -1) {
+    fadein()
+  } else {
+    fadeout()
+  }
+}
+var img = document.querySelector('img')
+
+function loaded() {
+  imageZoom("myimage", "myresult");
+}
+
+if (img.complete) {
+  loaded()
+} else {
+  img.addEventListener('load', loaded)
+  img.addEventListener('error', function() {
+      alert('error')
+  })
+}
+</script>
+</html>

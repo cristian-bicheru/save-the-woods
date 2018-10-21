@@ -1,0 +1,202 @@
+<!doctype html>
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/3.2.1/firebase.js"></script>
+<script src="https://www.gstatic.com/firebasejs/3.1.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/3.1.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/ui/live/1.0/firebase-ui-auth.js"></script>
+<link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/live/1.0/firebase-ui-auth.css">
+<link rel="stylesheet" type="text/css" href="style.css">
+<script src="settings/main.js"></script>
+<title>Save The Woods</title>
+<style>
+/* Always set the map height explicitly to define the size of the div
+ * element that contains the map. */
+#map {
+  height: 100%;
+}
+/* Optional: Makes the sample page fill the window. */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+#description {
+  font-family: Roboto;
+  font-size: 15px;
+  font-weight: 300;
+}
+
+#infowindow-content .title {
+  font-weight: bold;
+}
+
+#infowindow-content {
+  display: none;
+}
+
+#map #infowindow-content {
+  display: inline;
+}
+
+.pac-card {
+  margin: 10px 10px 0 0;
+  border-radius: 2px 0 0 2px;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  outline: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  background-color: #fff;
+  font-family: Roboto;
+}
+
+#pac-container {
+  padding-bottom: 12px;
+  margin-right: 12px;
+}
+
+.pac-controls {
+  display: inline-block;
+  padding: 5px 11px;
+}
+
+.pac-controls label {
+  font-family: Roboto;
+  font-size: 13px;
+  font-weight: 300;
+}
+
+#pac-input {
+  background-color: #fff;
+  font-family: Roboto;
+  font-size: 15px;
+  font-weight: 300;
+  margin-left: 5px;
+  padding: 0 13px 0 13px;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+#pac-input:focus {
+  border-color: #4d90fe;
+}
+
+#title {
+  color: #fff;
+  background-color: #4d90fe;
+  font-size: 25px;
+  font-weight: 500;
+  padding: 6px 12px;
+}
+.lbox2 {
+  border-style: solid;
+  border-width: 2px;
+  border-radius: 8px;
+  border-color: #d0e9f6;
+  background: #f0fff4;
+}
+</style>
+</head>
+<body>
+
+<div id="logged-out">
+	<div class="header" id="headerMoving" style="position:fixed;opacity:0.8;text-align:left;max-width:100%">
+		<div style="padding-top:5px;padding-bottom:5px;">
+  		<h4 style="letter-spacing:1px;float:left;padding:15px;margin:0;">Save The Woods</h4>
+		<a href="/" class="headl"><div class="lbox" style="float:left;max-height:50px"><h4 style="letter-spacing:1px;padding:15px;margin:0;">Home</h4></div></a>
+  		<h4 style="letter-spacing:1px;float:right;padding:15px;margin:0;cursor: default;" alt="loginS" id="loginS">Sign In</h4>
+ 		<div style="clear:both"></div>
+		</div>
+
+	</div>
+	<div id="fader" style="z-index:2;"></div>
+	<div id="loginbox" style="z-index:3;">
+		<div id="ldiv" style="z-index:4;">
+    			<div id="firebaseui-auth-container" style="padding-top:50px;"></div>
+			<h4 style="text-align:center;cursor: default;" alt="loginH" id="loginH" allign="center">Cancel</h4>
+		</div>
+	</div>
+	<div style="padding-top:100px;">
+	<center>
+	<h4 style="letter-spacing:1px;"> You must be signed in to edit your account settings! </h4>
+	</center>
+	</div>
+</div>
+<div id="logged-in">
+	<div class="header" id="headerMoving" style="position:fixed;opacity:0.8;text-align:left;max-width:100%">
+		<div style="padding-top:5px;padding-bottom:5px;">
+  		<h4 style="letter-spacing:1px;float:left;padding:15px;margin:0;">Save The Woods</h4>
+		<a href="/satview" class="headl"><div class="lbox" style="float:left;max-height:50px"><h4 style="letter-spacing:1px;padding:15px;margin:0;">Satelite Data</h4></div></a>
+		<div style="width:15px;float:left;margin:0;"><h4></h4></div>
+		<a href="/" class="headl"><div class="lbox" style="float:left;max-height:50px"><h4 style="letter-spacing:1px;padding:15px;margin:0;">Home</h4></div></a>
+		<h4 style="letter-spacing:1px;float:right;padding:15px;margin:0;cursor: default;" id="sign-out">Sign Out</h4>
+		<div class="lbox" style="float:right;max-height:50px">
+  		<div id="points" style="letter-spacing:1px;float:right;padding:15px 15px 15px 0px;margin:0;"></div><h4 style="letter-spacing:1px;float:right;padding:15px 5px 15px 10px;margin:0;">Points: </h4>
+  		<div id="locationb" style="letter-spacing:1px;float:right;padding:15px 15px 15px 0px;margin:0;"></div><h4 style="letter-spacing:1px;float:right;padding:15px 5px 15px 15px;margin:0;">Location: </h4>
+		</div>
+ 		<div style="clear:both"></div>
+		</div>
+
+	</div>
+	<div style="padding-top: 200px">
+	<center>
+	<h4 style="letter-spacing:1px;display:inline-block;">Your Email:&nbsp;</h4><div id="user" style="display:inline-block;"></div>
+	<div style='clear:both;'></div>
+	</center>
+	</div>
+	<div style="padding-top: 15px">
+		<center>
+			<h4 style="letter-spacing:1px;">Set/Change Location:</h4>
+	      			<div class="form-group">
+					<div class="pac-card" id="pac-card" style="max-width:40%;">
+  <div>
+  </div>
+  <div style="padding:15px" id="pac-container">
+    <input id="pac-input" type="text"
+        placeholder="Enter a location">
+  </div>
+</div>
+<div id="map"></div>
+<div id="infowindow-content">
+  <img src="" width="16" height="16" id="place-icon">
+  <span id="place-name"  class="title"></span><br>
+  <span id="place-address"></span>
+</div>
+<script src="https://maps.googleapis.com/maps/api/js?key={api key}&libraries=places&callback=initMap"
+        async defer></script> <div style="padding:2px"><h4></h4></div>
+		</center>
+  </div>
+	</div>
+</div>
+</body>
+<script>
+
+loginShow = document.getElementById('loginS');
+loginHide = document.getElementById('loginH');
+fade = document.getElementById('fader');
+loginBox = document.getElementById('loginbox');
+
+loginShow.onclick=function(){
+   fade.style.display = "block";
+   loginBox.style.display = "block";}
+loginHide.onclick=function(){
+   fade.style.display = "none";
+   loginBox.style.display = "none";}
+
+function fadein(){
+    jQuery("#headerMoving").fadeIn();
+};
+function fadeout(){
+    jQuery("#headerMoving").fadeOut();
+};
+window.onscroll = function() {moveHeader()};
+function moveHeader() {
+  if (window.pageYOffset > -1) {
+    fadein()
+  } else {
+    fadeout()
+  }
+}
+</script>
+</html>
