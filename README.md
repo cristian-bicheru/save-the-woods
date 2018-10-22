@@ -1,2 +1,2 @@
 # save-the-woods
-SpaceApps 2018 Submission
+Space Apps 2018 Submission
